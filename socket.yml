@@ -1,0 +1,107 @@
+name: paypal-subscription-payment
+description: Description of syncano-socket-paypal-subscription-payment
+version: 0.0.1
+runtime: nodejs_v8
+keywords:
+  - hello
+  - world
+
+endpoints:
+  billing-plans:
+    description: Create, get, list and update actions for paypal billing plan.
+    long_description: >
+      This comprises of four actions for `billing-plans` resource.
+      Make sure to use the request methods `POST` for creating billing-plans, `PUT` for updating billing-plans and `GET`
+      for showing single billing-plan details by ID and listing billing-plan that were created. Kindly refer to
+      https://developer.paypal.com/docs/api/payments.billing-plans for more details.
+    parameters:
+      create_billing_plan_details:
+        type: object
+        description: Detail parameters for creating a billing plan
+        example: |
+          {
+            "description": "Create Plan for Regular",
+            "type": "INFINITE"
+            "merchant_preferences": {
+              "auto_bill_amount": "yes",
+              "cancel_url": "http://www.cancel.com",
+              "initial_fail_amount_action": "continue",
+              "max_fail_attempts": "1",
+              "return_url": "http://www.success.com",
+              "setup_fee": {
+                  "currency": "USD",
+                  "value": "25"
+              }
+            },
+            "name": "Testing1-Regular1",
+            "payment_definitions": [
+              {
+                ....
+              }
+            ]
+          }
+      update_billing_plan_details:
+        type: array
+        description: An array of JSON patch objects to apply partial updates to billing plan
+        example: |
+          [
+            {
+              "op": "replace",
+              "path": "/merchant-preferences",
+              "value": {
+                "cancel_url": "https://example.com/cancel",
+                "setup_fee": {
+                "value": "5",
+                "currency": "USD"
+                }
+              }
+            }
+          ]
+      billing_plan_id:
+        type: string
+        description: The ID of the billing plan to update or retrieve.
+        long_description: |
+          Note that this is required for get and update and shouldn't be passed for create or list billing plans.
+        example: "P-3FV74344GJ503923KW"
+      page:
+        type: string
+        description: Zero-indexed number of the first page that begins the set of pages that are returned (List billing plans)
+      status:
+        type: string
+        description: Filters the plans in the response by a plan status (List billing plans)
+        example: "INACTIVE | CREATED | ACTIVE"
+      page_size:
+        type: string
+        description: Number of plans to list on a single page (List billing plans)
+        example: "10"
+      total_required:
+        type: string
+        description: Indicates whether the response includes the total_items and total_pages fields (List billing plans)
+        example: "yes"
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 200
+          description: Success
+          example: |
+            {
+              "id": "P-7DC96732KA7763723UOPKETA",
+              "state": "CREATED",
+              "name": "Plan with Regular and Trial Payment Definitions",
+              "description": "Plan with regular and trial payment definitions.",
+              "type": "FIXED",
+              "payment_definitions": [ ]
+              ...
+            }
+        -
+          exit_code: 400
+          description: Failed
+          example: |
+            {
+              "name": "VALIDATION_ERROR",
+              "details": [ ... ],
+              "message": "Invalid request. See details.",
+              "information_link": "https://developer.paypal.com/docs/api/payments.billing-plans#errors",
+              "httpStatusCode": 400
+            }
