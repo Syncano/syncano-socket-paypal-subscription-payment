@@ -33,7 +33,7 @@ export default async (ctx) => {
       const { statusCode, paypalResponse } = result;
       response.json(paypalResponse, statusCode);
     } else if (requestMethod === 'PATCH') {
-      validateRequired({ update_billing_plan_details });
+      validateRequired({ update_billing_plan_details, billing_plan_id });
       const result = await callEndpoint(
         'billingPlan', 'update', update_billing_plan_details, billing_plan_id);
       const { statusCode, paypalResponse } = result;

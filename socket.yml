@@ -1,18 +1,18 @@
 name: paypal-subscription-payment
-description: Description of syncano-socket-paypal-subscription-payment
+description: Socket for creating sunscription payments with paypal
 version: 0.0.1
 runtime: nodejs_v8
 keywords:
-  - hello
-  - world
+  - paypal
+  - subscription payments
 
 endpoints:
   billing-plans:
     description: Create, get, list and update actions for paypal billing plan.
     long_description: >
       This comprises of four actions for `billing-plans` resource.
-      Make sure to use the request methods `POST` for creating billing-plans, `PUT` for updating billing-plans and `GET`
-      for showing single billing-plan details by ID and listing billing-plan that were created. Kindly refer to
+      Make sure to use the request methods `POST` for creating billing plans, `PATCH` for updating billing plans and `GET`
+      for showing single billing plan details by ID and listing billing plans that were created. Kindly refer to
       https://developer.paypal.com/docs/api/payments.billing-plans for more details.
     parameters:
       create_billing_plan_details:
@@ -104,4 +104,260 @@ endpoints:
               "message": "Invalid request. See details.",
               "information_link": "https://developer.paypal.com/docs/api/payments.billing-plans#errors",
               "httpStatusCode": 400
+            }
+  billing-plans-activate:
+    description: Endpoint that activates a billing plan so that it can be used to form billing agreements with users
+    parameters:
+      billing_plan_id:
+        type: string
+        description: The ID of the billing plan.
+        example: "P-3FV74344GJ503923KW"
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 200
+          description: Success
+          example: |
+            200 OK
+  billing-agreements:
+    description: Create, get, list and update actions for paypal billing agreement.
+    long_description: >
+      This comprises of three actions for `billing-agreements` resource.
+      Make sure to use the request methods `POST` for creating billing agreements, `PATCH` for updating billing agreement and `GET`
+      for showing single billing agreement details by ID. Kindly refer to
+      https://developer.paypal.com/docs/api/payments.billing-agreements for more details.
+    parameters:
+      create_billing_agreement_details:
+        type: object
+        description: Parameters for creating a billing agreement
+        example: |
+          {
+            "name": "Fast Speed Agreement",
+            "description": "Agreement for Fast Speed Plan",
+            "start_date": isoDate,
+            "plan": {
+              "id": "P-0NJ10521L3680291SOAQIVTQ"
+            },
+            "payer": {
+              "payment_method": "paypal"
+            },
+            "shipping_address": {
+              "line1": "StayBr111idge Suites",
+              "line2": "Cro12ok Street",
+              "city": "San Jose",
+              "state": "CA",
+              "postal_code": "95112",
+              "country_code": "US"
+            }
+          }
+      update_billing_agreement_details:
+        type: array
+        description: An array of JSON patch objects to apply partial updates to billing agreement
+        example: |
+          [
+            {
+              "op": "replace",
+              "path": "/merchant-preferences",
+              "value": {
+                "description": "Newer Description",
+                "name": "New Name",
+                "shipping_address": {
+                  "line1": "StayBr111idge Suites",
+                  "line2": "Cro12ok Street",
+                  "city": "San Jose",
+                  "state": "CA",
+                  "postal_code": "95112",
+                  "country_code": "US"
+                }
+              }
+            }
+          ]
+      billing_agreement_id:
+        type: string
+        description: The ID of a billing agreement.
+        example: "P-3FV74344GJ503923KW"
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 200
+          description: Success
+          example: |
+            {
+              "id": "P-7DC96732KA7763723UOPKETA",
+              "state": "CREATED",
+              "name": "Plan with Regular and Trial Payment Definitions",
+              "description": "Plan with regular and trial payment definitions.",
+              "type": "FIXED",
+              "payment_definitions": [ ]
+              ...
+            }
+        -
+          exit_code: 400
+          description: Failed
+          example: |
+            {
+              "name": "VALIDATION_ERROR",
+              "details": [ ... ],
+              "message": "Invalid request. See details.",
+              "information_link": "https://developer.paypal.com/docs/api/payments.billing-plans#errors",
+              "httpStatusCode": 400
+            }
+  billing-agreements-bill-balance:
+    description: Endpoint that bills the balance for an agreement.
+    parameters:
+      billing_agreement_id:
+        type: string
+        description: The ID of a billing agreement.
+        example: "P-3FV74344GJ503923KW"
+      amount:
+        type: object
+        description: Billing agreement amounta and currency
+        example: |
+          {
+            "value": "100",
+            "currency": "USD"
+          }
+      note:
+        type: string
+        description: Optional note that describes the reason for the billing action
+        example: "Billing balance amount"
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 204
+          description: Success
+          example: |
+            204 No Content
+  billing-agreements-cancel:
+    description: Endpoint to cancel a billing agreement.
+    parameters:
+      billing_agreement_id:
+        type: string
+        description: The ID of a billing agreement.
+        example: "P-3FV74344GJ503923KW"
+      note:
+        type: string
+        description: Optional note that describes the reason for the cancellation.
+        example: "Canceling the agreement"
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 204
+          description: Success
+          example: |
+            204 No Content
+  billing-agreements-re-active:
+    description: Endpoint to re-activate a suspended billing agreement
+    parameters:
+      billing_agreement_id:
+        type: string
+        description: The ID of a billing agreement.
+        example: "P-3FV74344GJ503923KW"
+      note:
+        type: string
+        description: Optional note that describes the reason for the re-activation
+        example: "Re-activating agreement"
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 204
+          description: Success
+          example: |
+            204 No Content
+  billing-agreements-set-balance:
+    description: Endpoint that sets the balance for an agreement
+    parameters:
+      billing_agreement_id:
+        type: string
+        description: The ID of a billing agreement.
+        example: "P-3FV74344GJ503923KW"
+      amount:
+        type: object
+        description: Billing agreement amount and currency
+        example: |
+          {
+            "value": "100",
+            "currency": "USD"
+          }
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 204
+          description: Success
+          example: |
+            204 No Content
+  billing-agreements-suspend:
+    description: Endpoint that suspends a billing agreement
+    parameters:
+      billing_agreement_id:
+        type: string
+        description: The ID of a billing agreement.
+        example: "P-3FV74344GJ503923KW"
+      note:
+        type: string
+        description: Optional note that describes the reason for the state change
+        example: "Suspending the agreement"
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 204
+          description: Success
+          example: |
+            204 No Content
+  billing-agreements-transactions:
+    description: Endpoint to list transactions for an agreement
+    parameters:
+      billing_agreement_id:
+        type: string
+        description: The ID of a billing agreement.
+        example: "P-3FV74344GJ503923KW"
+      start_date:
+        type: string
+        description: The start date of the range of transactions to list
+      end_date:
+        type: string
+        description: The end date of the range of transactions to list
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 200
+          description: Success
+          example: |
+            {
+              "agreement_transaction_list": [
+                {
+                  "transaction_id": "I-V8SSE9WLJGY6",
+                  "status": "Completed",
+                  ....
+                }
+                ...
+              ]
+            }
+  billing-agreements-execute:
+    description: Endpoint that executes a billing agreement
+    parameters:
+      payment_token:
+        type: string
+        description: Payment Token of format EC-XXXXXX, appended to return url as a parameter after buyer approves agreement
+        example: "EC-2V0782854X675410W"
+    response:
+      mimetype: application/json
+      examples:
+        -
+          exit_code: 200
+          description: Success
+          example: |
+            {
+              "id": "I-1TJ3GAGG82Y9",
+              "state": "Active",
+              "description": "Monthly agreement with free trial payment definition.",
+              ...
             }
