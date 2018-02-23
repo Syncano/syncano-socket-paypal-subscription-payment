@@ -250,7 +250,7 @@ endpoints:
           description: Success
           example: |
             204 No Content
-  billing-agreements-re-active:
+  billing-agreements-re-activate:
     description: Endpoint to re-activate a suspended billing agreement
     parameters:
       billing_agreement_id:
