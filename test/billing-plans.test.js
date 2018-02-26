@@ -4,7 +4,7 @@ import { run, generateMeta } from 'syncano-test';
 import 'dotenv/config';
 
 import {
-  create_billing_plan_params, update_payment_params, updated_insurance
+  create_billing_plan_details, update_billing_plan_details
 } from './utils/helpers';
 
 describe('billing-plans', () => {
@@ -29,10 +29,11 @@ describe('billing-plans', () => {
     it('should create billing plan successfully with valid parameters', (done) => {
       meta.request.REQUEST_METHOD = 'POST';
       run('billing-plans',
-        { args: { create_billing_plan_details: create_billing_plan_params }, meta })
+        { args: { create_billing_plan_details }, meta })
         .then((res) => {
           const billing_plan = res.data;
           billing_plan_id = billing_plan.id;
+          process.env.TEST_BILLING_PLAN_ID = billing_plan.id;
 
           expect(res.code).to.equal(201);
           expect(billing_plan.id).to.contain('P-');
@@ -40,6 +41,8 @@ describe('billing-plans', () => {
           expect(billing_plan).to.have.property('state');
           expect(billing_plan.state).to.equal('CREATED');
           expect(billing_plan).to.have.property('description');
+          expect(billing_plan).to.have.property('payment_definitions');
+          expect(billing_plan.payment_definitions).to.be.an.instanceof(Array);
           done();
         })
         .catch((err) => {
@@ -49,7 +52,7 @@ describe('billing-plans', () => {
 
     it('should return "VALIDATION_ERROR" if type parameter absent', (done) => {
       meta.request.REQUEST_METHOD = 'POST';
-      const argsValidation = { ...create_billing_plan_params, type: null };
+      const argsValidation = { ...create_billing_plan_details, type: null };
       run('billing-plans', { args: { create_billing_plan_details: argsValidation }, meta })
         .then((res) => {
           expect(res.code).to.equal(400);
@@ -63,81 +66,83 @@ describe('billing-plans', () => {
     });
   });
 
-  // describe('PATCH', () => {
-  //   it('should update payment successfully with valid parameters', (done) => {
-  //     meta.request.REQUEST_METHOD = 'PATCH';
-  //     run('billing-plans',
-  //       { args: { update_payment_details: update_payment_params, payment_id }, meta })
-  //       .then((res) => {
-  //         const updatedPayment = res.data;
-  //
-  //         expect(res.code).to.equal(200);
-  //         expect(updatedbilling_plan.id).to.equal(payment_id);
-  //
-  //         expect(updatedPayment).to.have.property('links');
-  //         expect(updatedPayment).to.have.property('transactions');
-  //
-  //         // Check for updated_insurance
-  //         expect(updatedbilling_plan.transactions[0].amount.details.insurance)
-  //           .to.equal(updated_insurance);
-  //         done();
-  //       })
-  //       .catch((err) => {
-  //         done(err);
-  //       });
-  //   });
-  // });
-  //
-  // describe('GET', () => {
-  //   it('should show details for a payment if payment ID passed is valid', (done) => {
-  //     meta.request.REQUEST_METHOD = 'GET';
-  //     run('billing-plans', { args: { payment_id }, meta })
-  //       .then((res) => {
-  //         expect(res.code).to.equal(200);
-  //         expect(res.data.id).to.equal(payment_id);
-  //
-  //         expect(res.data).to.have.property('links');
-  //         expect(res.data).to.have.property('transactions');
-  //         expect(res.data.intent).to.equal('sale');
-  //         done();
-  //       })
-  //       .catch((err) => {
-  //         done(err);
-  //       });
-  //   });
-  //
-  //   it('should list payments created if payment_id not passed as params', (done) => {
-  //     meta.request.REQUEST_METHOD = 'GET';
-  //     run('billing-plans', { args: { count: 3 }, meta })
-  //       .then((res) => {
-  //         expect(res.code).to.equal(200);
-  //         expect(res.data).to.have.property('payments');
-  //         expect(res.data).to.have.property('count');
-  //         expect(res.data.payments).to.be.an.instanceof(Array);
-  //         expect(res.data.payments.length).to.be.at.most(3);
-  //         done();
-  //       })
-  //       .catch((err) => {
-  //         done(err);
-  //       });
-  //   });
-  // });
-  //
-  // describe('Invalid request method', () => {
-  //   it('should return an error if request method is of type `DELETE`', (done) => {
-  //     meta.request.REQUEST_METHOD = 'DELETE';
-  //     run('billing-plans', { meta })
-  //       .then((res) => {
-  //         const actions = 'creating, retrieving and updating payments respectively';
-  //         const expectedMethodTypes = ['POST', 'GET', 'PATCH'].join(', ');
-  //         const errorMessage = `Make sure to use ${expectedMethodTypes} for ${actions}.`;
-  //         expect(res.code).to.equal(400);
-  //         expect(res.data.message).to.equal(errorMessage);
-  //         done();
-  //       })
-  //       .catch((err) => {
-  //         done(err);
-  //       });
-  //   });
-  // });
+  describe('PATCH', () => {
+    it('should update billing plan successfully with valid parameters', (done) => {
+      meta.request.REQUEST_METHOD = 'PATCH';
+      run('billing-plans',
+        { args: { update_billing_plan_details, billing_plan_id }, meta })
+        .then((res) => {
+          expect(res.code).to.equal(200);
+          expect(res.data.httpStatusCode).equal(200);
+          done();
+        })
+        .catch((err) => {
+          done(err);
+        });
+    });
+  });
+
+  describe('GET', () => {
+    it('should get nonexistent billing plan failure if invalid billing plan ID passed', (done) => {
+      meta.request.REQUEST_METHOD = 'GET';
+      run('billing-plans', { args: { billing_plan_id: 'ABCDEFGH' }, meta })
+        .then((res) => {
+          expect(res.code).to.equal(400);
+          expect(res.data.name).to.equal('TEMPLATE_ID_INVALID');
+          done();
+        })
+        .catch((err) => {
+          done(err);
+        });
+    });
+
+    it('should show details for a billing plan if billing plan ID passed is valid',
+      (done) => {
+        meta.request.REQUEST_METHOD = 'GET';
+        run('billing-plans', { args: { billing_plan_id }, meta })
+          .then((res) => {
+            expect(res.code).to.equal(200);
+            expect(res.data.id).to.equal(billing_plan_id);
+            expect(res.data).to.have.property('state');
+            expect(res.data).to.have.property('name');
+            done();
+          })
+          .catch((err) => {
+            done(err);
+          });
+      });
+
+    it('should list billing plans created if billing_plan_id not passed as params', (done) => {
+      meta.request.REQUEST_METHOD = 'GET';
+      run('billing-plans', { args: { page_size: '3' }, meta })
+        .then((res) => {
+          expect(res.code).to.equal(200);
+          expect(res.data).to.have.property('plans');
+          expect(res.data.plans).to.be.an.instanceof(Array);
+          expect(res.data.plans.length).to.be.at.most(3);
+          done();
+        })
+        .catch((err) => {
+          done(err);
+        });
+    });
+  });
+
+  describe('Invalid request method', () => {
+    it('should return an error if request method is of type `DELETE`', (done) => {
+      meta.request.REQUEST_METHOD = 'DELETE';
+      run('billing-plans', { meta })
+        .then((res) => {
+          const actions = 'creating, retrieving and updating billing plans respectively';
+          const expectedMethodTypes = ['POST', 'GET', 'PATCH'].join(', ');
+          const errorMessage = `Make sure to use ${expectedMethodTypes} for ${actions}.`;
+          expect(res.code).to.equal(400);
+          expect(res.data.message).to.equal(errorMessage);
+          done();
+        })
+        .catch((err) => {
+          done(err);
+        });
+    });
+  });
 });

@@ -1,12 +1,4 @@
-const discount_amount = '-2.00';
-const shipping = '2.00';
-const handling_fee = '1.00';
-const insurance = '1.00';
-const shipping_discount = '1.00';
-
-const updated_insurance = '4.00';
-
-const create_billing_plan_params = {
+const create_billing_plan_details = {
   description: 'Create Plan for Regular',
   merchant_preferences: {
     auto_bill_amount: 'yes',
@@ -79,20 +71,15 @@ const create_billing_plan_params = {
   type: 'INFINITE'
 };
 
-const update_payment_params = [
+const update_billing_plan_details = [
   {
     op: 'replace',
-    path: '/transactions/0/amount',
+    path: '/merchant-preferences',
     value: {
-      total: '36.07',
-      currency: 'USD',
-      details: {
-        subtotal: '30.00',
-        tax: '0.07',
-        shipping,
-        handling_fee,
-        shipping_discount,
-        insurance: updated_insurance
+      cancel_url: 'http://www.paypal123.com',
+      setup_fee: {
+        value: '22',
+        currency: 'USD'
       }
     }
   }
@@ -219,8 +206,7 @@ const execute_payment_response =
 
 
 export {
-  create_billing_plan_params,
-  update_payment_params,
-  updated_insurance,
+  create_billing_plan_details,
+  update_billing_plan_details,
   execute_payment_response
 };
