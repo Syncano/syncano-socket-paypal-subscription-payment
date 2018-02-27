@@ -3,9 +3,7 @@ import { expect } from 'chai';
 import { run, generateMeta } from 'syncano-test';
 import 'dotenv/config';
 
-import {
-  create_billing_plan_details, update_billing_plan_details
-} from './utils/helpers';
+import { create_billing_plan_details, update_billing_plan_details } from './utils/helpers';
 
 describe('billing-plans', () => {
   const { PAYPAL_CONFIG_URL, PAYPAL_MODE, PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET } = process.env;

@@ -85,128 +85,28 @@ const update_billing_plan_details = [
   }
 ];
 
-const execute_payment_response =
-  {
-    id: 'PAY-9N9834337A9191208KOZOQWI',
-    create_time: '2017-07-01T16:56:57Z',
-    update_time: '2017-07-01T17:05:41Z',
-    state: 'approved',
-    intent: 'order',
-    payer: {
-      payment_method: 'paypal',
-      payer_info: {
-        email: 'qa152-biz@example.com',
-        first_name: 'Thomas',
-        last_name: 'Miller',
-        payer_id: 'PUP87RBJV8HPU',
-        shipping_address: {
-          line1: '4th Floor, One Lagoon Drive',
-          line2: 'Unit #34',
-          city: 'Redwood City',
-          state: 'CA',
-          postal_code: '94065',
-          country_code: 'US',
-          phone: '011862212345678',
-          recipient_name: 'Thomas Miller'
-        }
-      }
-    },
-    transactions: [
-      {
-        amount: {
-          total: '41.15',
-          currency: 'USD',
-          details: {
-            subtotal: '30.00',
-            tax: '0.15',
-            shipping: '11.00'
-          }
-        },
-        description: 'The payment transaction description.',
-        item_list: {
-          items: [
-            {
-              name: 'hat',
-              sku: '1',
-              price: '3.00',
-              currency: 'USD',
-              quantity: '5'
-            },
-            {
-              name: 'handbag',
-              sku: 'product34',
-              price: '15.00',
-              currency: 'USD',
-              quantity: '1'
-            }
-          ],
-          shipping_address: {
-            recipient_name: 'Thomas Miller',
-            line1: '4th Floor, One Lagoon Drive',
-            line2: 'Unit #34',
-            city: 'Redwood City',
-            state: 'CA',
-            phone: '011862212345678',
-            postal_code: '94065',
-            country_code: 'US'
-          }
-        },
-        related_resources: [
-          {
-            order: {
-              id: 'O-3SP845109F051535C',
-              create_time: '2017-07-01T16:56:58Z',
-              update_time: '2017-07-01T17:05:41Z',
-              state: 'pending',
-              amount: {
-                total: '41.15',
-                currency: 'USD'
-              },
-              parent_payment: 'PAY-9N9834337A9191208KOZOQWI',
-              links: [
-                {
-                  href: 'https://api.sandbox.paypal.com/v1/payments/orders/O-3SP845109F051535C',
-                  rel: 'self',
-                  method: 'GET'
-                },
-                {
-                  href: 'https://api.sandbox.paypal.com/v1/payments/payment/PAY-9N9834337A9191208KOZOQWI',
-                  rel: 'parent_payment',
-                  method: 'GET'
-                },
-                {
-                  href: 'https://api.sandbox.paypal.com/v1/payments/orders/O-3SP845109F051535C/void',
-                  rel: 'void',
-                  method: 'POST'
-                },
-                {
-                  href: 'https://api.sandbox.paypal.com/v1/payments/orders/O-3SP845109F051535C/authorize',
-                  rel: 'authorization',
-                  method: 'POST'
-                },
-                {
-                  href: 'https://api.sandbox.paypal.com/v1/payments/orders/O-3SP845109F051535C/capture',
-                  rel: 'capture',
-                  method: 'POST'
-                }
-              ]
-            }
-          }
-        ]
-      }
-    ],
-    links: [
-      {
-        href: 'https://api.sandbox.paypal.com/v1/payments/payment/PAY-9N9834337A9191208KOZOQWI',
-        rel: 'self',
-        method: 'GET'
-      }
-    ]
-  };
-
+const create_billing_agreement_details = {
+  name: 'Fast Speed Agreement',
+  description: 'Agreement for Fast Speed Plan',
+  start_date: '2019-04-26T11:27:22.962Z',
+  plan: {
+    id: 'P-0NJ10521L3680291SOAQIVTQ'
+  },
+  payer: {
+    payment_method: 'paypal'
+  },
+  shipping_address: {
+    line1: 'StayBr111idge Suites',
+    line2: 'Cro12ok Street',
+    city: 'San Jose',
+    state: 'CA',
+    postal_code: '95112',
+    country_code: 'US'
+  }
+};
 
 export {
   create_billing_plan_details,
   update_billing_plan_details,
-  execute_payment_response
+  create_billing_agreement_details
 };

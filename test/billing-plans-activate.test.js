@@ -5,6 +5,19 @@ import 'dotenv/config';
 describe('billing-plans-activate', () => {
   const meta = generateMeta('billing-plans-activate');
 
+  it('should ensure billing_plan_id is passed as parameter', (done) => {
+    run('billing-plans-activate', { args: { }, meta })
+      .then((res) => {
+        expect(res.code).to.equal(400);
+        expect(res.data.message).to.equal('Validation error(s)');
+        done();
+      })
+      .catch((err) => {
+        done(err);
+      });
+  });
+
+
   it('should return "BUSINESS_VALIDATION_ERROR" if invalid billing plan ID passed', (done) => {
     run('billing-plans-activate', { args: { billing_plan_id: 'ABCDEFGH' }, meta })
       .then((res) => {
