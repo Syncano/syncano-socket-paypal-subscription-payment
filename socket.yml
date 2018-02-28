@@ -69,7 +69,7 @@ endpoints:
       status:
         type: string
         description: Filters the plans in the response by a plan status (List billing plans)
-        example: "INACTIVE | CREATED | ACTIVE"
+        example: "INACTIVE/CREATED/ACTIVE"
       page_size:
         type: string
         description: Number of plans to list on a single page (List billing plans)
