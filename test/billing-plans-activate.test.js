@@ -1,5 +1,6 @@
 import { expect } from 'chai';
-import { run, generateMeta } from 'syncano-test';
+import { describe, it } from 'mocha';
+import { run, generateMeta } from '@syncano/test';
 import 'dotenv/config';
 
 describe('billing-plans-activate', () => {

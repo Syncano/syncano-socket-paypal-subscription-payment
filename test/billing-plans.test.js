@@ -1,6 +1,7 @@
 import request from 'supertest';
 import { expect } from 'chai';
-import { run, generateMeta } from 'syncano-test';
+import { describe, it } from 'mocha';
+import { run, generateMeta } from '@syncano/test';
 import 'dotenv/config';
 
 import { create_billing_plan_details, update_billing_plan_details } from './utils/helpers';

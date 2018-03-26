@@ -4,7 +4,7 @@ version: 0.0.1
 runtime: nodejs_v8
 keywords:
   - paypal
-  - subscription payments
+  - subscription
 
 endpoints:
   billing-plans:
@@ -205,132 +205,138 @@ endpoints:
               "httpStatusCode": 400
             }
   billing-agreements-bill-balance:
-    description: Endpoint that bills the balance for an agreement.
-    parameters:
-      billing_agreement_id:
+    description: Endpoint that bills an outstanding balance of an agreement.
+    inputs:
+      properties:
+        billing_agreement_id:
+          type: string
+          description: The ID of a billing agreement.
+          examples:
+            - P-3FV74344GJ503923KW
+      note:
         type: string
-        description: The ID of a billing agreement.
-        example: "P-3FV74344GJ503923KW"
+        description: Optional note that describes the agreement state change.
+        examples:
+          - Billing balance amount
       amount:
         type: object
         description: Billing agreement amounta and currency
         example: |
           {
-            "value": "100",
+            "value": "10",
             "currency": "USD"
           }
-      note:
-        type: string
-        description: Optional note that describes the reason for the billing action
-        example: "Billing balance amount"
-    response:
-      mimetype: application/json
-      examples:
-        -
-          exit_code: 204
-          description: Success
-          example: |
-            204 No Content
+    outputs:
+      success:
+        exit_code: 204
+        description: Success
+        examples:
+          - 204 No Content
   billing-agreements-cancel:
     description: Endpoint to cancel a billing agreement.
-    parameters:
-      billing_agreement_id:
-        type: string
-        description: The ID of a billing agreement.
-        example: "P-3FV74344GJ503923KW"
+    inputs:
+      properties:
+        billing_agreement_id:
+          type: string
+          description: The ID of a billing agreement.
+          examples:
+            - P-3FV74344GJ503923KW
       note:
         type: string
         description: Optional note that describes the reason for the cancellation.
-        example: "Canceling the agreement"
-    response:
-      mimetype: application/json
-      examples:
-        -
-          exit_code: 204
-          description: Success
-          example: |
-            204 No Content
+        examples:
+          - Canceling agreement
+    outputs:
+      success:
+        exit_code: 204
+        description: Success
+        examples:
+          - 204 No Content
   billing-agreements-re-activate:
     description: Endpoint to re-activate a suspended billing agreement
-    parameters:
-      billing_agreement_id:
-        type: string
-        description: The ID of a billing agreement.
-        example: "P-3FV74344GJ503923KW"
+    inputs:
+      properties:
+        billing_agreement_id:
+          type: string
+          description: The ID of a billing agreement.
+          examples:
+            - P-3FV74344GJ503923KW
       note:
         type: string
         description: Optional note that describes the reason for the re-activation
-        example: "Re-activating agreement"
-    response:
-      mimetype: application/json
-      examples:
-        -
-          exit_code: 204
-          description: Success
-          example: |
-            204 No Content
+        examples:
+          - Re-activating agreement
+    outputs:
+      success:
+        exit_code: 204
+        description: Success
+        examples:
+          - 204 No Content
   billing-agreements-set-balance:
     description: Endpoint that sets the balance for an agreement
-    parameters:
-      billing_agreement_id:
-        type: string
-        description: The ID of a billing agreement.
-        example: "P-3FV74344GJ503923KW"
-      amount:
-        type: object
-        description: Billing agreement amount and currency
-        example: |
-          {
-            "value": "100",
-            "currency": "USD"
-          }
-    response:
-      mimetype: application/json
-      examples:
-        -
-          exit_code: 204
-          description: Success
-          example: |
-            204 No Content
+    inputs:
+      properties:
+        billing_agreement_id:
+          type: string
+          description: The ID of a billing agreement.
+          examples:
+            - P-3FV74344GJ503923KW
+        amount:
+          type: object
+          description: Billing agreement amount and currency
+          examples:
+            - |
+              {
+                "value": "100",
+                "currency": "USD"
+              }
+    outputs:
+      success:
+        exit_code: 204
+        description: Success
+        examples:
+          - 204 No Content
   billing-agreements-suspend:
     description: Endpoint that suspends a billing agreement
-    parameters:
-      billing_agreement_id:
-        type: string
-        description: The ID of a billing agreement.
-        example: "P-3FV74344GJ503923KW"
+    inputs:
+      properties:
+        billing_agreement_id:
+          type: string
+          description: The ID of a billing agreement.
+          examples:
+            - P-3FV74344GJ503923KW
       note:
         type: string
         description: Optional note that describes the reason for the state change
-        example: "Suspending the agreement"
-    response:
-      mimetype: application/json
-      examples:
-        -
-          exit_code: 204
-          description: Success
-          example: |
-            204 No Content
+        examples:
+          - Suspending the agreement
+    outputs:
+      success:
+        exit_code: 204
+        description: Success
+        examples:
+          - 204 No Content
   billing-agreements-transactions:
     description: Endpoint to list transactions for an agreement
-    parameters:
-      billing_agreement_id:
-        type: string
-        description: The ID of a billing agreement.
-        example: "P-3FV74344GJ503923KW"
-      start_date:
-        type: string
-        description: The start date of the range of transactions to list
-      end_date:
-        type: string
-        description: The end date of the range of transactions to list
-    response:
-      mimetype: application/json
-      examples:
-        -
-          exit_code: 200
-          description: Success
-          example: |
+    inputs:
+      properties:
+        billing_agreement_id:
+          type: string
+          description: The ID of a billing agreement.
+          examples:
+            - P-3FV74344GJ503923KW
+        start_date:
+          type: string
+          description: The start date of the range of transactions to list
+        end_date:
+          type: string
+          description: The end date of the range of transactions to list
+    outputs:
+      success:
+        exit_code: 200
+        description: Success
+        examples:
+          - |
             {
               "agreement_transaction_list": [
                 {
@@ -343,18 +349,19 @@ endpoints:
             }
   billing-agreements-execute:
     description: Endpoint that executes a billing agreement
-    parameters:
-      payment_token:
-        type: string
-        description: Payment Token of format EC-XXXXXX, appended to return url as a parameter after buyer approves agreement
-        example: "EC-2V0782854X675410W"
-    response:
-      mimetype: application/json
-      examples:
-        -
-          exit_code: 200
-          description: Success
-          example: |
+    inputs:
+      properties:
+        payment_token:
+          type: string
+          description: Payment Token of format EC-XXXXXX, appended to return url as a parameter after buyer approves agreement
+          examples:
+            - EC-2V0782854X675410W
+    outputs:
+      success:
+        exit_code: 200
+        description: Success
+        examples:
+          - |
             {
               "id": "I-1TJ3GAGG82Y9",
               "state": "Active",

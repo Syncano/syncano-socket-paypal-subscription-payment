@@ -1,12 +1,13 @@
 import { expect } from 'chai';
-import { run, generateMeta } from 'syncano-test';
+import { describe, it } from 'mocha';
+import { run, generateMeta } from '@syncano/test';
+import url from 'url';
 import 'dotenv/config';
 
 import { create_billing_agreement_details, update_billing_plan_details } from './utils/helpers';
 
 describe('billing-agreements', () => {
   const meta = generateMeta('billing_agreements');
-  // let billing_agreement_id = '';
 
   describe('POST', () => {
     it('should create billing agreement successfully with valid parameters', (done) => {
@@ -15,18 +16,21 @@ describe('billing-agreements', () => {
       run('billing_agreements',
         { args: { create_billing_agreement_details }, meta })
         .then((res) => {
-          const billing_agreement = res.data;
-          // billing_agreement_id = billing_agreement.id;
-          // process.env.TEST_BILLING_AGREEMENT_ID = billing_agreement.id;
+          const billingAgreement = res.data;
 
-          const executeLinkUrlSplits = links[1].href.split('/');
-          process.env.TEST_PAYMENT_TOKEN = executeLinkUrlSplits[executeLinkUrlSplits.length - 2];
+          for (let index = 0; index < billingAgreement.links.length; index += 1) {
+            if (billingAgreement.links[index].rel === 'approval_url') {
+              const approval_url = billingAgreement.links[index].href;
+              process.env.TEST_PAYMENT_TOKEN = url.parse(approval_url, true).query.token;
+              break;
+            }
+          }
 
           expect(res.code).to.equal(201);
-          expect(billing_agreement.name).to.equal(create_billing_agreement_details.name);
-          expect(billing_agreement.plan.id).to.equal(create_billing_agreement_details.plan.id);
-          expect(billing_agreement).to.have.property('plan');
-          expect(billing_agreement).to.have.property('start_date');
+          expect(billingAgreement.name).to.equal(create_billing_agreement_details.name);
+          expect(billingAgreement.plan.id).to.equal(create_billing_agreement_details.plan.id);
+          expect(billingAgreement).to.have.property('plan');
+          expect(billingAgreement).to.have.property('start_date');
           done();
         })
         .catch((err) => {
