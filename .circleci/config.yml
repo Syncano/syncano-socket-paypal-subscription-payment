@@ -55,12 +55,12 @@ jobs:
           key: v6-repo-{{ .Environment.CIRCLE_SHA1 }}
       - add_ssh_keys:
           fingerprints:
-            - "61:6f:fb:52:08:57:92:3d:84:a7:e9:40:23:96:cc:bd"
+            - "2e:29:2a:e8:da:47:ef:c4:42:11:b1:3c:a6:fb:b9:69"
       - run: SYNCANO_AUTH_KEY=$SYNCANO_AUTH_KEY SYNCANO_HOST=api.syncano.io npx s submit ${SOCKET_NAME} -b patch
       - run: SYNCANO_AUTH_KEY=$SYNCANO_AUTH_KEY SYNCANO_HOST=api.syncano.io npx s publish ${SOCKET_NAME}
       - run:
           name: Avoid hosts unknown for github
-          command: mkdir ~/.ssh/ && echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
+          command: mkdir -p ~/.ssh/ && echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
       - run: git config --global user.email $GITHUB_EMAIL && git config --global user.name $GITHUB_NAME
       - run: git commit -a -m "Bumping version [ci skip]" && git push origin $CIRCLE_BRANCH
 

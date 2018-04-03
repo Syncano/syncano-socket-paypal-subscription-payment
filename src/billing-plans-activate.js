@@ -9,18 +9,10 @@ export default async (ctx) => {
     await configurePayPal(data);
 
     validateRequired({ billing_plan_id });
-    const result = await callEndpoint(
-      'billingPlan', 'activate', null, billing_plan_id);
-    const { statusCode, paypalResponse } = result;
-    response.json(paypalResponse, statusCode);
-  } catch (err) {
-    const { error, message, statusCode, details } = err;
-    if (error) {
-      return response.json(error, statusCode);
-    }
-    if (details) {
-      return response.json({ message, details }, 400);
-    }
-    return response.json({ message }, statusCode || 400);
+    const { statusCode, paypalResponse } =
+      await callEndpoint('billingPlan', 'activate', null, billing_plan_id);
+    return response.json(paypalResponse, statusCode);
+  } catch ({ error, statusCode, ...errorDetails }) {
+    return response.json(error || errorDetails, statusCode || 400);
   }
 };

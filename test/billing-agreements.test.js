@@ -17,14 +17,8 @@ describe('billing-agreements', () => {
         { args: { create_billing_agreement_details }, meta })
         .then((res) => {
           const billingAgreement = res.data;
-
-          for (let index = 0; index < billingAgreement.links.length; index += 1) {
-            if (billingAgreement.links[index].rel === 'approval_url') {
-              const approval_url = billingAgreement.links[index].href;
-              process.env.TEST_PAYMENT_TOKEN = url.parse(approval_url, true).query.token;
-              break;
-            }
-          }
+          const approval_url = billingAgreement.links.find(obj => obj.rel === 'bar').href;
+          process.env.TEST_PAYMENT_TOKEN = url.parse(approval_url, true).query.token;
 
           expect(res.code).to.equal(201);
           expect(billingAgreement.name).to.equal(create_billing_agreement_details.name);
