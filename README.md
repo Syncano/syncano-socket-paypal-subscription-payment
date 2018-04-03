@@ -1,5 +1,7 @@
 # paypal-subscription-payment
 
+[![CircleCI](https://circleci.com/gh/Syncano/syncano-socket-paypal-subscription-payment.svg?style=svg)](https://circleci.com/gh/Syncano/syncano-socket-paypal-subscription-payment)
+
 `version:` **0.0.1**
 
 Socket for creating sunscription payments with paypal

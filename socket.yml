@@ -14,77 +14,83 @@ endpoints:
       Make sure to use the request methods `POST` for creating billing plans, `PATCH` for updating billing plans and `GET`
       for showing single billing plan details by ID and listing billing plans that were created. Kindly refer to
       https://developer.paypal.com/docs/api/payments.billing-plans for more details.
-    parameters:
-      create_billing_plan_details:
-        type: object
-        description: Detail parameters for creating a billing plan
-        example: |
-          {
-            "description": "Create Plan for Regular",
-            "type": "INFINITE"
-            "merchant_preferences": {
-              "auto_bill_amount": "yes",
-              "cancel_url": "http://www.cancel.com",
-              "initial_fail_amount_action": "continue",
-              "max_fail_attempts": "1",
-              "return_url": "http://www.success.com",
-              "setup_fee": {
-                  "currency": "USD",
-                  "value": "25"
-              }
-            },
-            "name": "Testing1-Regular1",
-            "payment_definitions": [
+    inputs:
+      properties:
+        create_billing_plan_details:
+          type: object
+          description: Detail parameters for creating a billing plan
+          examples:
+            - |
               {
-                ....
+                "description": "Create Plan for Regular",
+                "type": "INFINITE"
+                "merchant_preferences": {
+                  "auto_bill_amount": "yes",
+                  "cancel_url": "http://www.cancel.com",
+                  "initial_fail_amount_action": "continue",
+                  "max_fail_attempts": "1",
+                  "return_url": "http://www.success.com",
+                  "setup_fee": {
+                      "currency": "USD",
+                      "value": "25"
+                  }
+                },
+                "name": "Testing1-Regular1",
+                "payment_definitions": [
+                  {
+                    ....
+                  }
+                ]
               }
-            ]
-          }
-      update_billing_plan_details:
-        type: array
-        description: An array of JSON patch objects to apply partial updates to billing plan
-        example: |
-          [
-            {
-              "op": "replace",
-              "path": "/merchant-preferences",
-              "value": {
-                "cancel_url": "https://example.com/cancel",
-                "setup_fee": {
-                "value": "5",
-                "currency": "USD"
+        update_billing_plan_details:
+          type: array
+          description: An array of JSON patch objects to apply partial updates to billing plan
+          examples:
+            - |
+              [
+                {
+                  "op": "replace",
+                  "path": "/merchant-preferences",
+                  "value": {
+                    "cancel_url": "https://example.com/cancel",
+                    "setup_fee": {
+                    "value": "5",
+                    "currency": "USD"
+                    }
+                  }
                 }
-              }
-            }
-          ]
-      billing_plan_id:
-        type: string
-        description: The ID of the billing plan to update or retrieve.
-        long_description: |
-          Note that this is required for get and update and shouldn't be passed for create or list billing plans.
-        example: "P-3FV74344GJ503923KW"
-      page:
-        type: string
-        description: Zero-indexed number of the first page that begins the set of pages that are returned (List billing plans)
-      status:
-        type: string
-        description: Filters the plans in the response by a plan status (List billing plans)
-        example: "INACTIVE/CREATED/ACTIVE"
-      page_size:
-        type: string
-        description: Number of plans to list on a single page (List billing plans)
-        example: "10"
-      total_required:
-        type: string
-        description: Indicates whether the response includes the total_items and total_pages fields (List billing plans)
-        example: "yes"
-    response:
-      mimetype: application/json
-      examples:
-        -
-          exit_code: 200
-          description: Success
-          example: |
+              ]
+        billing_plan_id:
+          type: string
+          description: The ID of the billing plan to update or retrieve.
+          long_description: |
+            Note that this is required for get and update and shouldn't be passed for create or list billing plans.
+          examples:
+            - P-3FV74344GJ503923KW
+        page:
+          type: string
+          description: Zero-indexed number of the first page that begins the set of pages that are returned (List billing plans)
+        status:
+          type: string
+          description: Filters the plans in the response by a plan status (List billing plans)
+          examples:
+            - INACTIVE/CREATED/ACTIVE
+        page_size:
+          type: string
+          description: Number of plans to list on a single page (List billing plans)
+          examples:
+            - 10
+        total_required:
+          type: string
+          description: Indicates whether the response includes the total_items and total_pages fields (List billing plans)
+          examples:
+            - yes
+    outputs:
+      success:
+        exit_code: 200
+        description: Success
+        examples:
+          - |
             {
               "id": "P-7DC96732KA7763723UOPKETA",
               "state": "CREATED",
@@ -94,10 +100,11 @@ endpoints:
               "payment_definitions": [ ]
               ...
             }
-        -
-          exit_code: 400
-          description: Failed
-          example: |
+      fail:
+        exit_code: 400
+        description: Failed
+        examples:
+          - |
             {
               "name": "VALIDATION_ERROR",
               "details": [ ... ],
@@ -105,21 +112,23 @@ endpoints:
               "information_link": "https://developer.paypal.com/docs/api/payments.billing-plans#errors",
               "httpStatusCode": 400
             }
+
   billing-plans-activate:
     description: Endpoint that activates a billing plan so that it can be used to form billing agreements with users
-    parameters:
-      billing_plan_id:
-        type: string
-        description: The ID of the billing plan.
-        example: "P-3FV74344GJ503923KW"
-    response:
-      mimetype: application/json
-      examples:
-        -
-          exit_code: 200
-          description: Success
-          example: |
-            200 OK
+    inputs:
+      properties:
+        billing_plan_id:
+          type: string
+          description: The ID of the billing plan.
+          examples:
+            - P-3FV74344GJ503923KW
+    outputs:
+      success:
+        exit_code: 200
+        description: Success
+        examples:
+          - 200 OK
+
   billing-agreements:
     description: Create, get, list and update actions for paypal billing agreement.
     long_description: >
@@ -127,41 +136,23 @@ endpoints:
       Make sure to use the request methods `POST` for creating billing agreements, `PATCH` for updating billing agreement and `GET`
       for showing single billing agreement details by ID. Kindly refer to
       https://developer.paypal.com/docs/api/payments.billing-agreements for more details.
-    parameters:
-      create_billing_agreement_details:
-        type: object
-        description: Parameters for creating a billing agreement
-        example: |
-          {
-            "name": "Fast Speed Agreement",
-            "description": "Agreement for Fast Speed Plan",
-            "start_date": isoDate,
-            "plan": {
-              "id": "P-0NJ10521L3680291SOAQIVTQ"
-            },
-            "payer": {
-              "payment_method": "paypal"
-            },
-            "shipping_address": {
-              "line1": "StayBr111idge Suites",
-              "line2": "Cro12ok Street",
-              "city": "San Jose",
-              "state": "CA",
-              "postal_code": "95112",
-              "country_code": "US"
-            }
-          }
-      update_billing_agreement_details:
-        type: array
-        description: An array of JSON patch objects to apply partial updates to billing agreement
-        example: |
-          [
-            {
-              "op": "replace",
-              "path": "/merchant-preferences",
-              "value": {
-                "description": "Newer Description",
-                "name": "New Name",
+    inputs:
+      properties:
+        create_billing_agreement_details:
+          type: object
+          description: Parameters for creating a billing agreement
+          examples:
+            - |
+              {
+                "name": "Fast Speed Agreement",
+                "description": "Agreement for Fast Speed Plan",
+                "start_date": isoDate,
+                "plan": {
+                  "id": "P-0NJ10521L3680291SOAQIVTQ"
+                },
+                "payer": {
+                  "payment_method": "paypal"
+                },
                 "shipping_address": {
                   "line1": "StayBr111idge Suites",
                   "line2": "Cro12ok Street",
@@ -171,39 +162,56 @@ endpoints:
                   "country_code": "US"
                 }
               }
-            }
-          ]
-      billing_agreement_id:
-        type: string
-        description: The ID of a billing agreement.
-        example: "P-3FV74344GJ503923KW"
-    response:
-      mimetype: application/json
-      examples:
-        -
-          exit_code: 200
-          description: Success
-          example: |
-            {
-              "id": "P-7DC96732KA7763723UOPKETA",
-              "state": "CREATED",
-              "name": "Plan with Regular and Trial Payment Definitions",
-              "description": "Plan with regular and trial payment definitions.",
-              "type": "FIXED",
-              "payment_definitions": [ ]
-              ...
-            }
-        -
-          exit_code: 400
-          description: Failed
-          example: |
-            {
-              "name": "VALIDATION_ERROR",
-              "details": [ ... ],
-              "message": "Invalid request. See details.",
-              "information_link": "https://developer.paypal.com/docs/api/payments.billing-plans#errors",
-              "httpStatusCode": 400
-            }
+        update_billing_agreement_details:
+          type: array
+          description: An array of JSON patch objects to apply partial updates to billing agreement
+          examples:
+            - |
+              [
+                {
+                  "op": "replace",
+                  "path": "/merchant-preferences",
+                  "value": {
+                    "description": "Newer Description",
+                    "name": "New Name",
+                    "shipping_address": {
+                      "line1": "StayBr111idge Suites",
+                      "line2": "Cro12ok Street",
+                      "city": "San Jose",
+                      "state": "CA",
+                      "postal_code": "95112",
+                      "country_code": "US"
+                    }
+                  }
+                }
+              ]
+        billing_agreement_id:
+          type: string
+          description: The ID of a billing agreement.
+          examples:
+            - P-3FV74344GJ503923KW
+        payment_id:
+          type: string
+          description: The ID of the payment to execute.
+        payer_id:
+          type: string
+          description: The ID of the payer that PayPal passes in the return_url.
+          examples:
+            - 22393D847794YKER7MUI
+        transactions:
+          type: array
+          description: An array of transaction details. For execute the transactions object accepts only the amount object.
+          examples:
+            - |
+              [
+                {
+                  "amount": {
+                    "currency": "USD",
+                    "total": "1.00"
+                  }
+                }
+              ]
+
   billing-agreements-bill-balance:
     description: Endpoint that bills an outstanding balance of an agreement.
     inputs:
@@ -212,7 +220,7 @@ endpoints:
           type: string
           description: The ID of a billing agreement.
           examples:
-            - P-3FV74344GJ503923KW
+            - I-1TJ3GAGG82Y9
       note:
         type: string
         description: Optional note that describes the agreement state change.
@@ -221,11 +229,12 @@ endpoints:
       amount:
         type: object
         description: Billing agreement amounta and currency
-        example: |
-          {
-            "value": "10",
-            "currency": "USD"
-          }
+        examples:
+          - |
+            {
+              "value": "10",
+              "currency": "USD"
+            }
     outputs:
       success:
         exit_code: 204
@@ -240,7 +249,7 @@ endpoints:
           type: string
           description: The ID of a billing agreement.
           examples:
-            - P-3FV74344GJ503923KW
+            - I-1TJ3GAGG82Y9
       note:
         type: string
         description: Optional note that describes the reason for the cancellation.
