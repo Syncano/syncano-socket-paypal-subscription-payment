@@ -13,11 +13,11 @@ describe('billing-agreements', () => {
     it('should create billing agreement successfully with valid parameters', (done) => {
       meta.request.REQUEST_METHOD = 'POST';
       create_billing_agreement_details.plan.id = process.env.TEST_BILLING_PLAN_ID;
-      run('billing_agreements',
+      run('billing-agreements',
         { args: { create_billing_agreement_details }, meta })
         .then((res) => {
           const billingAgreement = res.data;
-          const approval_url = billingAgreement.links.find(obj => obj.rel === 'bar').href;
+          const approval_url = billingAgreement.links.find(obj => obj.rel === 'approval_url').href;
           process.env.TEST_PAYMENT_TOKEN = url.parse(approval_url, true).query.token;
 
           expect(res.code).to.equal(201);
@@ -35,7 +35,7 @@ describe('billing-agreements', () => {
     it('should return "Validation error(s)" if create_billing_agreement_details parameter absent',
       (done) => {
         meta.request.REQUEST_METHOD = 'POST';
-        run('billing_agreements', { args: { }, meta })
+        run('billing-agreements', { args: { }, meta })
           .then((res) => {
             expect(res.code).to.equal(400);
             expect(res.data.message).to.equal('Validation error(s)');
@@ -51,7 +51,7 @@ describe('billing-agreements', () => {
   describe('Invalid request method', () => {
     it('should return an error if request method is of type `DELETE`', (done) => {
       meta.request.REQUEST_METHOD = 'DELETE';
-      run('billing_agreements', { meta })
+      run('billing-agreements', { meta })
         .then((res) => {
           const actions = 'creating, retrieving and updating billing agreements respectively';
           const expectedMethodTypes = ['POST', 'GET', 'PATCH'].join(', ');
