@@ -1,19 +1,20 @@
 name: paypal-subscription-payment
 description: Socket for creating sunscription payments with paypal
-version: 0.0.1
+version: 0.0.2
 runtime: nodejs_v8
 keywords:
   - paypal
   - subscription
-
 endpoints:
   billing-plans:
-    description: Create, get, list and update actions for paypal billing plan.
+    description: 'Create, get, list and update actions for paypal billing plan.'
     long_description: >
-      This comprises of four actions for `billing-plans` resource.
-      Make sure to use the request methods `POST` for creating billing plans, `PATCH` for updating billing plans and `GET`
-      for showing single billing plan details by ID and listing billing plans that were created. Kindly refer to
-      https://developer.paypal.com/docs/api/payments.billing-plans for more details.
+      This comprises of four actions for `billing-plans` resource. Make sure to
+      use the request methods `POST` for creating billing plans, `PATCH` for
+      updating billing plans and `GET` for showing single billing plan details
+      by ID and listing billing plans that were created. Kindly refer to
+      https://developer.paypal.com/docs/api/payments.billing-plans for more
+      details.
     inputs:
       properties:
         create_billing_plan_details:
@@ -44,7 +45,9 @@ endpoints:
               }
         update_billing_plan_details:
           type: array
-          description: An array of JSON patch objects to apply partial updates to billing plan
+          description: >-
+            An array of JSON patch objects to apply partial updates to billing
+            plan
           examples:
             - |
               [
@@ -63,16 +66,21 @@ endpoints:
         billing_plan_id:
           type: string
           description: The ID of the billing plan to update or retrieve.
-          long_description: |
-            Note that this is required for get and update and shouldn't be passed for create or list billing plans.
+          long_description: >
+            Note that this is required for get and update and shouldn't be
+            passed for create or list billing plans.
           examples:
             - P-3FV74344GJ503923KW
         page:
           type: string
-          description: Zero-indexed number of the first page that begins the set of pages that are returned (List billing plans)
+          description: >-
+            Zero-indexed number of the first page that begins the set of pages
+            that are returned (List billing plans)
         status:
           type: string
-          description: Filters the plans in the response by a plan status (List billing plans)
+          description: >-
+            Filters the plans in the response by a plan status (List billing
+            plans)
           examples:
             - INACTIVE/CREATED/ACTIVE
         page_size:
@@ -82,9 +90,11 @@ endpoints:
             - 10
         total_required:
           type: string
-          description: Indicates whether the response includes the total_items and total_pages fields (List billing plans)
+          description: >-
+            Indicates whether the response includes the total_items and
+            total_pages fields (List billing plans)
           examples:
-            - yes
+            - 'yes'
     outputs:
       success:
         exit_code: 200
@@ -112,9 +122,10 @@ endpoints:
               "information_link": "https://developer.paypal.com/docs/api/payments.billing-plans#errors",
               "httpStatusCode": 400
             }
-
   billing-plans-activate:
-    description: Endpoint that activates a billing plan so that it can be used to form billing agreements with users
+    description: >-
+      Endpoint that activates a billing plan so that it can be used to form
+      billing agreements with users
     inputs:
       properties:
         billing_plan_id:
@@ -128,14 +139,15 @@ endpoints:
         description: Success
         examples:
           - 200 OK
-
   billing-agreements:
-    description: Create, get, list and update actions for paypal billing agreement.
+    description: 'Create, get, list and update actions for paypal billing agreement.'
     long_description: >
-      This comprises of three actions for `billing-agreements` resource.
-      Make sure to use the request methods `POST` for creating billing agreements, `PATCH` for updating billing agreement and `GET`
-      for showing single billing agreement details by ID. Kindly refer to
-      https://developer.paypal.com/docs/api/payments.billing-agreements for more details.
+      This comprises of three actions for `billing-agreements` resource. Make
+      sure to use the request methods `POST` for creating billing agreements,
+      `PATCH` for updating billing agreement and `GET` for showing single
+      billing agreement details by ID. Kindly refer to
+      https://developer.paypal.com/docs/api/payments.billing-agreements for more
+      details.
     inputs:
       properties:
         create_billing_agreement_details:
@@ -164,7 +176,9 @@ endpoints:
               }
         update_billing_agreement_details:
           type: array
-          description: An array of JSON patch objects to apply partial updates to billing agreement
+          description: >-
+            An array of JSON patch objects to apply partial updates to billing
+            agreement
           examples:
             - |
               [
@@ -200,7 +214,9 @@ endpoints:
             - 22393D847794YKER7MUI
         transactions:
           type: array
-          description: An array of transaction details. For execute the transactions object accepts only the amount object.
+          description: >-
+            An array of transaction details. For execute the transactions object
+            accepts only the amount object.
           examples:
             - |
               [
@@ -211,7 +227,6 @@ endpoints:
                   }
                 }
               ]
-
   billing-agreements-bill-balance:
     description: Endpoint that bills an outstanding balance of an agreement.
     inputs:
@@ -362,7 +377,9 @@ endpoints:
       properties:
         payment_token:
           type: string
-          description: Payment Token of format EC-XXXXXX, appended to return url as a parameter after buyer approves agreement
+          description: >-
+            Payment Token of format EC-XXXXXX, appended to return url as a
+            parameter after buyer approves agreement
           examples:
             - EC-2V0782854X675410W
     outputs:
